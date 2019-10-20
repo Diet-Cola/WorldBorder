@@ -1,13 +1,8 @@
 name: ${project.name}
 author: Brettflan
 description: Efficient, feature-rich plugin for limiting the size of your worlds.
-<<<<<<< HEAD
 version: ${project.version}
 api-version: 1.14
-=======
-version: 1.9.10 (beta)
-api-version: 1.13
->>>>>>> brettflan/master
 main: com.wimbli.WorldBorder.WorldBorder
 softdepend:
   - dynmap
