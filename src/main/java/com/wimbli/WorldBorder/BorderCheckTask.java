@@ -3,14 +3,13 @@ package com.wimbli.WorldBorder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -107,16 +106,9 @@ public class BorderCheckTask implements Runnable
 				rideLoc.setY(newLoc.getY() + vertOffset);
 				if (Config.Debug())
 					Config.logWarn("Player was riding a \"" + ride.toString() + "\".");
-				if (ride instanceof Boat)
-				{	// boats currently glitch on client when teleported, so crappy workaround is to remove it and spawn a new one
-					ride.remove();
-					ride = world.spawnEntity(rideLoc, EntityType.BOAT);
-				}
-				else
-				{
-					ride.setVelocity(new Vector(0, 0, 0));
-					ride.teleport(rideLoc, TeleportCause.PLUGIN);
-				}
+
+				ride.setVelocity(new Vector(0, 0, 0));
+				ride.teleport(rideLoc, TeleportCause.PLUGIN);
 
 				if (Config.RemountTicks() > 0)
 				{
@@ -128,16 +120,18 @@ public class BorderCheckTask implements Runnable
 
 		// check if player has something (a pet, maybe?) riding them; only possible through odd plugins.
 		// it can prevent all teleportation of the player completely, so it's very much not good and needs handling
-		if (player.getPassenger() != null)
+		List<Entity> passengers = player.getPassengers();
+		if (!passengers.isEmpty())
 		{
-			Entity rider = player.getPassenger();
 			player.eject();
-			rider.teleport(newLoc, TeleportCause.PLUGIN);
-			player.sendMessage("Your passenger has been ejected.");
-			if (Config.Debug())
-				Config.logWarn("Player had a passenger riding on them: " + rider.getType());
+			for (Entity rider : passengers)
+			{
+				rider.teleport(newLoc, TeleportCause.PLUGIN);
+				if (Config.Debug())
+					Config.logWarn("Player had a passenger riding on them: " + rider.getType());
+			}
+			player.sendMessage("Your passenger" + ((passengers.size() > 1) ? "s have" : " has") + " been ejected.");
 		}
-
 
 		// give some particle and sound effects where the player was beyond the border, if "whoosh effect" is enabled
 		Config.showWhooshEffect(loc);
@@ -201,7 +195,7 @@ public class BorderCheckTask implements Runnable
 				if (vehicle == null || player == null)
 					return;
 
-				vehicle.setPassenger(player);
+				vehicle.addPassenger(player);
 			}
 		}, delay);
 	}

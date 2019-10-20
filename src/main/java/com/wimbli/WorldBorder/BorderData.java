@@ -1,7 +1,6 @@
 package com.wimbli.WorldBorder;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.EnumSet;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -127,6 +126,7 @@ public class BorderData
 	 * @deprecated  Replaced by {@link #getRadiusX()} and {@link #getRadiusZ()};
 	 * this method now returns an average of those two values and is thus imprecise
 	 */
+	@Deprecated
 	public int getRadius()
 	{
 		return (radiusX + radiusZ) / 2;  // average radius; not great, but probably best for backwards compatibility
@@ -292,35 +292,117 @@ public class BorderData
 	}
 
 	//these material IDs are acceptable for places to teleport player; breathable blocks and water
-	public static final LinkedHashSet<Material> safeOpenBlocks = new LinkedHashSet<Material>(Arrays.asList(
-		 new Material[] {
-		 		Material.AIR,               Material.WATER,              Material.POWERED_RAIL,        Material.DETECTOR_RAIL,        Material.COBWEB,                Material.TALL_GRASS,              Material.DEAD_BUSH,
-				Material.TORCH,             Material.WHEAT,              Material.LADDER,              Material.REDSTONE_WIRE,        Material.LEVER,                 Material.BROWN_MUSHROOM,          Material.RED_MUSHROOM,
-				Material.REDSTONE_TORCH,    Material.STONE_BUTTON,       Material.SNOW,                Material.SUGAR_CANE,           Material.NETHER_PORTAL,         Material.REPEATER,                Material.HEAVY_WEIGHTED_PRESSURE_PLATE,
-				Material.PUMPKIN_STEM,      Material.MELON_STEM,         Material.VINE,                Material.NETHER_WART,          Material.TRIPWIRE_HOOK,         Material.IRON_DOOR,               Material.LIGHT_WEIGHTED_PRESSURE_PLATE,
-				Material.TRIPWIRE,          Material.CARROTS,            Material.POTATOES,            Material.COMPARATOR,           Material.ACTIVATOR_RAIL,        Material.RAIL,                    Material.STONE_PRESSURE_PLATE,
-				Material.WHITE_CARPET,      Material.ORANGE_CARPET,      Material.MAGENTA_CARPET,      Material.LIGHT_BLUE_CARPET,    Material.YELLOW_CARPET,         Material.LIME_CARPET,             Material.PINK_CARPET,
-				Material.GRAY_CARPET,       Material.LIGHT_GRAY_CARPET,  Material.CYAN_CARPET,         Material.PURPLE_CARPET,        Material.BLUE_CARPET,           Material.BROWN_CARPET,            Material.GREEN_CARPET,
-				Material.RED_CARPET,        Material.BLACK_CARPET,       Material.POPPY,               Material.DANDELION,            Material.BLUE_ORCHID,           Material.ALLIUM,                  Material.AZURE_BLUET,
-				Material.RED_TULIP,         Material.ORANGE_TULIP,       Material.WHITE_TULIP,         Material.PINK_TULIP,           Material.OXEYE_DAISY,           Material.CORNFLOWER,              Material.LILY_OF_THE_VALLEY,
-				Material.OAK_SIGN,          Material.OAK_WALL_SIGN,      Material.OAK_DOOR,            Material.OAK_BUTTON,           Material.OAK_SAPLING,           Material.OAK_PRESSURE_PLATE,      Material.OAK_TRAPDOOR,
-				Material.BIRCH_SIGN,        Material.BIRCH_WALL_SIGN,    Material.BIRCH_DOOR,          Material.BIRCH_BUTTON,         Material.BIRCH_SAPLING,         Material.BIRCH_PRESSURE_PLATE,    Material.BIRCH_TRAPDOOR,
-				Material.SPRUCE_SIGN,       Material.SPRUCE_WALL_SIGN,   Material.SPRUCE_DOOR,         Material.SPRUCE_BUTTON,        Material.SPRUCE_SAPLING,        Material.SPRUCE_PRESSURE_PLATE,   Material.SPRUCE_TRAPDOOR,
-				Material.ACACIA_SIGN,       Material.ACACIA_WALL_SIGN,   Material.ACACIA_DOOR,         Material.ACACIA_BUTTON,        Material.ACACIA_SAPLING,        Material.ACACIA_PRESSURE_PLATE,   Material.ACACIA_TRAPDOOR,
-				Material.DARK_OAK_SIGN,     Material.DARK_OAK_WALL_SIGN, Material.DARK_OAK_DOOR,       Material.DARK_OAK_BUTTON,      Material.DARK_OAK_SAPLING,      Material.DARK_OAK_PRESSURE_PLATE, Material.DARK_OAK_TRAPDOOR,
-				Material.JUNGLE_SIGN,       Material.JUNGLE_WALL_SIGN,   Material.JUNGLE_DOOR,         Material.JUNGLE_BUTTON,        Material.JUNGLE_SAPLING,        Material.JUNGLE_PRESSURE_PLATE,   Material.JUNGLE_TRAPDOOR,
-				Material.SUNFLOWER,         Material.LILAC,              Material.ROSE_BUSH,           Material.PEONY,                Material.LARGE_FERN,            Material.TALL_GRASS,              Material.LARGE_FERN,
-				Material.TUBE_CORAL,        Material.BRAIN_CORAL,        Material.BUBBLE_CORAL,        Material.FIRE_CORAL,           Material.FIRE_CORAL,            Material.HORN_CORAL,              Material.DEAD_TUBE_CORAL,
-				Material.DEAD_BUBBLE_CORAL, Material.DEAD_BRAIN_CORAL,   Material.DEAD_FIRE_CORAL,     Material.DEAD_HORN_CORAL,      Material.TUBE_CORAL_FAN,        Material.BUBBLE_CORAL_FAN,        Material.BRAIN_CORAL_FAN,
-				Material.FIRE_CORAL_FAN,    Material.HORN_CORAL_FAN,     Material.DEAD_TUBE_CORAL_FAN, Material.DEAD_BRAIN_CORAL_FAN, Material.DEAD_BUBBLE_CORAL_FAN, Material.DEAD_FIRE_CORAL_FAN,     Material. DEAD_HORN_CORAL_FAN,
-				Material.FERN,              Material.BAMBOO_SAPLING,     Material.BAMBOO,              Material.KELP_PLANT,           Material.SEAGRASS,
-		 }
-	));
+	public static final EnumSet<Material> safeOpenBlocks = EnumSet.noneOf(Material.class);
+	static
+	{
+		safeOpenBlocks.add(Material.AIR);
+		safeOpenBlocks.add(Material.CAVE_AIR);
+		safeOpenBlocks.add(Material.OAK_SAPLING);
+		safeOpenBlocks.add(Material.SPRUCE_SAPLING);
+		safeOpenBlocks.add(Material.BIRCH_SAPLING);
+		safeOpenBlocks.add(Material.JUNGLE_SAPLING);
+		safeOpenBlocks.add(Material.ACACIA_SAPLING);
+		safeOpenBlocks.add(Material.DARK_OAK_SAPLING);
+		safeOpenBlocks.add(Material.WATER);
+		safeOpenBlocks.add(Material.RAIL);
+		safeOpenBlocks.add(Material.POWERED_RAIL);
+		safeOpenBlocks.add(Material.DETECTOR_RAIL);
+		safeOpenBlocks.add(Material.ACTIVATOR_RAIL);
+		safeOpenBlocks.add(Material.COBWEB);
+		safeOpenBlocks.add(Material.GRASS);
+		safeOpenBlocks.add(Material.FERN);
+		safeOpenBlocks.add(Material.DEAD_BUSH);
+		safeOpenBlocks.add(Material.DANDELION);
+		safeOpenBlocks.add(Material.POPPY);
+		safeOpenBlocks.add(Material.BLUE_ORCHID);
+		safeOpenBlocks.add(Material.ALLIUM);
+		safeOpenBlocks.add(Material.AZURE_BLUET);
+		safeOpenBlocks.add(Material.RED_TULIP);
+		safeOpenBlocks.add(Material.ORANGE_TULIP);
+		safeOpenBlocks.add(Material.WHITE_TULIP);
+		safeOpenBlocks.add(Material.PINK_TULIP);
+		safeOpenBlocks.add(Material.OXEYE_DAISY);
+		safeOpenBlocks.add(Material.BROWN_MUSHROOM);
+		safeOpenBlocks.add(Material.RED_MUSHROOM);
+		safeOpenBlocks.add(Material.TORCH);
+		safeOpenBlocks.add(Material.WALL_TORCH);
+		safeOpenBlocks.add(Material.REDSTONE_WIRE);
+		safeOpenBlocks.add(Material.WHEAT);
+		safeOpenBlocks.add(Material.LADDER);
+		safeOpenBlocks.add(Material.LEVER);
+		safeOpenBlocks.add(Material.LIGHT_WEIGHTED_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.HEAVY_WEIGHTED_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.STONE_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.OAK_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.SPRUCE_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.BIRCH_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.JUNGLE_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.ACACIA_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.DARK_OAK_PRESSURE_PLATE);
+		safeOpenBlocks.add(Material.REDSTONE_TORCH);
+		safeOpenBlocks.add(Material.REDSTONE_WALL_TORCH);
+		safeOpenBlocks.add(Material.STONE_BUTTON);
+		safeOpenBlocks.add(Material.SNOW);
+		safeOpenBlocks.add(Material.SUGAR_CANE);
+		safeOpenBlocks.add(Material.REPEATER);
+		safeOpenBlocks.add(Material.COMPARATOR);
+		safeOpenBlocks.add(Material.OAK_TRAPDOOR);
+		safeOpenBlocks.add(Material.SPRUCE_TRAPDOOR);
+		safeOpenBlocks.add(Material.BIRCH_TRAPDOOR);
+		safeOpenBlocks.add(Material.JUNGLE_TRAPDOOR);
+		safeOpenBlocks.add(Material.ACACIA_TRAPDOOR);
+		safeOpenBlocks.add(Material.DARK_OAK_TRAPDOOR);
+		safeOpenBlocks.add(Material.MELON_STEM);
+		safeOpenBlocks.add(Material.ATTACHED_MELON_STEM);
+		safeOpenBlocks.add(Material.PUMPKIN_STEM);
+		safeOpenBlocks.add(Material.ATTACHED_PUMPKIN_STEM);
+		safeOpenBlocks.add(Material.VINE);
+		safeOpenBlocks.add(Material.NETHER_WART);
+		safeOpenBlocks.add(Material.TRIPWIRE);
+		safeOpenBlocks.add(Material.TRIPWIRE_HOOK);
+		safeOpenBlocks.add(Material.CARROTS);
+		safeOpenBlocks.add(Material.POTATOES);
+		safeOpenBlocks.add(Material.OAK_BUTTON);
+		safeOpenBlocks.add(Material.SPRUCE_BUTTON);
+		safeOpenBlocks.add(Material.BIRCH_BUTTON);
+		safeOpenBlocks.add(Material.JUNGLE_BUTTON);
+		safeOpenBlocks.add(Material.ACACIA_BUTTON);
+		safeOpenBlocks.add(Material.DARK_OAK_BUTTON);
+		safeOpenBlocks.add(Material.SUNFLOWER);
+		safeOpenBlocks.add(Material.LILAC);
+		safeOpenBlocks.add(Material.ROSE_BUSH);
+		safeOpenBlocks.add(Material.PEONY);
+		safeOpenBlocks.add(Material.TALL_GRASS);
+		safeOpenBlocks.add(Material.LARGE_FERN);
+		safeOpenBlocks.add(Material.BEETROOTS);
+		try
+		{	// signs in 1.14 can be different wood types
+			safeOpenBlocks.add(Material.ACACIA_SIGN);
+			safeOpenBlocks.add(Material.ACACIA_WALL_SIGN);
+			safeOpenBlocks.add(Material.BIRCH_SIGN);
+			safeOpenBlocks.add(Material.BIRCH_WALL_SIGN);
+			safeOpenBlocks.add(Material.DARK_OAK_SIGN);
+			safeOpenBlocks.add(Material.DARK_OAK_WALL_SIGN);
+			safeOpenBlocks.add(Material.JUNGLE_SIGN);
+			safeOpenBlocks.add(Material.JUNGLE_WALL_SIGN);
+			safeOpenBlocks.add(Material.OAK_SIGN);
+			safeOpenBlocks.add(Material.OAK_WALL_SIGN);
+			safeOpenBlocks.add(Material.SPRUCE_SIGN);
+			safeOpenBlocks.add(Material.SPRUCE_WALL_SIGN);
+		}
+		catch (NoSuchFieldError ex) {}
+	}
 
 	//these material IDs are ones we don't want to drop the player onto, like cactus or lava or fire or activated Ender portal
-	public static final LinkedHashSet<Material> painfulBlocks = new LinkedHashSet<Material>(Arrays.<Material>asList(
-		 new Material[] {Material.LAVA, Material.FIRE, Material.CACTUS, Material.END_PORTAL, Material.MAGMA_BLOCK, Material.WITHER_ROSE, Material.CAMPFIRE, Material.SWEET_BERRY_BUSH}
-	));
+	public static final EnumSet<Material> painfulBlocks = EnumSet.noneOf(Material.class);
+	static
+	{
+		painfulBlocks.add(Material.LAVA);
+		painfulBlocks.add(Material.FIRE);
+		painfulBlocks.add(Material.CACTUS);
+		painfulBlocks.add(Material.END_PORTAL);
+		painfulBlocks.add(Material.MAGMA_BLOCK);
+	}
 
 	// check if a particular spot consists of 2 breathable blocks over something relatively solid
 	private boolean isSafeSpot(World world, int X, int Y, int Z, boolean flying)
@@ -332,7 +414,7 @@ public class BorderData
 
 		Material below = world.getBlockAt(X, Y - 1, Z).getType();
 		return (safe
-			 && (!safeOpenBlocks.contains(below) || Material.WATER.equals(below))	// below target block not open/breathable (so presumably solid), or is water
+			 && (!safeOpenBlocks.contains(below) || below == Material.WATER)	// below target block not open/breathable (so presumably solid), or is water
 			 && !painfulBlocks.contains(below)									// below target block not painful
 			);
 	}
@@ -349,7 +431,7 @@ public class BorderData
 
 		// if Y is larger than the world can be and user can fly, return Y - Unless we are in the Nether, we might not want players on the roof
 		if (flying && Y > limTop && !isNether)
-			return (double) Y;
+			return Y;
 
 		// make sure Y values are within the boundaries of the world.
 		if (Y > limTop)
@@ -377,14 +459,14 @@ public class BorderData
 			if(y1 > limBot)
 			{
 				if (isSafeSpot(world, X, y1, Z, flying))
-					return (double)y1;
+					return y1;
 			}
 
 			// Look above.
 			if(y2 < limTop && y2 != y1)
 			{
 				if (isSafeSpot(world, X, y2, Z, flying))
-					return (double)y2;
+					return y2;
 			}
 		}
 

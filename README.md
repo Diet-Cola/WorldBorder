@@ -1,4 +1,4 @@
 WorldBorder
 ===========
 
-<a href="http://dev.bukkit.org/server-mods/worldborder/">Read more on the BukkitDev site.</a>
+<a href="https://www.spigotmc.org/resources/worldborder.60905/">Read more on the Spigot Resource page for this plugin.</a>

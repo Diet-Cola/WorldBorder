@@ -50,6 +50,8 @@ public class Config
 	private static boolean portalRedirection = true;
 	private static boolean dynmapEnable = true;
 	private static String dynmapMessage;
+	private static int dynmapPriority = 0;
+	private static boolean dynmapHideByDefault = false;
 	private static int remountDelayTicks = 0;
 	private static boolean killPlayer = false;
 	private static boolean denyEnderpearl = false;
@@ -425,6 +427,16 @@ public class Config
 		return dynmapMessage;
 	}
 
+	public static boolean DynmapHideByDefault()
+	{
+		return dynmapHideByDefault;
+	}
+
+	public static int DynmapPriority()
+	{
+		return dynmapPriority;
+	}
+
 	public static void setPlayerBypass(UUID player, boolean bypass)
 	{
 		if (bypass)
@@ -441,7 +453,7 @@ public class Config
 
 	public static ArrayList<UUID> getPlayerBypassList()
 	{
-		return new ArrayList(bypassPlayers);
+		return new ArrayList<>(bypassPlayers);
 	}
 
 	// for converting bypass UUID list to/from String list, for storage in config
@@ -471,7 +483,7 @@ public class Config
 
 	public static void StartBorderTimer()
 	{
-		StopBorderTimer();
+		StopBorderTimer(false);
 
 		borderTask = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BorderCheckTask(), timerTicks, timerTicks);
 
@@ -483,11 +495,16 @@ public class Config
 
 	public static void StopBorderTimer()
 	{
+		StopBorderTimer(true);
+	}
+	public static void StopBorderTimer(boolean logIt)
+	{
 		if (borderTask == -1) return;
 
 		plugin.getServer().getScheduler().cancelTask(borderTask);
 		borderTask = -1;
-		logConfig("Border-checking timed task stopped.");
+		if (logIt)
+			logConfig("Border-checking timed task stopped.");
 	}
 
 	public static void StopFillTask()
@@ -610,6 +627,8 @@ public class Config
 		remountDelayTicks = cfg.getInt("remount-delay-ticks", 0);
 		dynmapEnable = cfg.getBoolean("dynmap-border-enabled", true);
 		dynmapMessage = cfg.getString("dynmap-border-message", "The border of the world.");
+		dynmapHideByDefault = cfg.getBoolean("dynmap-border-hideByDefault", false);
+		dynmapPriority = cfg.getInt("dynmap-border-priority", 0);
 		logConfig("Using " + (ShapeName()) + " border, knockback of " + knockBack + " blocks, and timer delay of " + timerTicks + ".");
 		killPlayer = cfg.getBoolean("player-killed-bad-spawn", false);
 		denyEnderpearl = cfg.getBoolean("deny-enderpearl", true);
@@ -670,7 +689,7 @@ public class Config
 				}
 
 				Boolean overrideShape = (Boolean) bord.get("shape-round");
-				boolean wrap = (boolean) bord.getBoolean("wrapping", false);
+				boolean wrap = bord.getBoolean("wrapping", false);
 				BorderData border = new BorderData(bord.getDouble("x", 0), bord.getDouble("z", 0), bord.getInt("radiusX", 0), bord.getInt("radiusZ", 0), overrideShape, wrap);
 				borders.put(worldName, border);
 				setMCBorder(worldName, border);
@@ -721,6 +740,8 @@ public class Config
 		cfg.set("remount-delay-ticks", remountDelayTicks);
 		cfg.set("dynmap-border-enabled", dynmapEnable);
 		cfg.set("dynmap-border-message", dynmapMessage);
+		cfg.set("dynmap-border-hideByDefault", dynmapHideByDefault);
+		cfg.set("dynmap-border-priority", dynmapPriority);
 		cfg.set("player-killed-bad-spawn", killPlayer);
 		cfg.set("deny-enderpearl", denyEnderpearl);
 		cfg.set("fill-autosave-frequency", fillAutosaveFrequency);
@@ -733,9 +754,8 @@ public class Config
 		cfg.set("worlds", null);
 		for(Entry<String, BorderData> stringBorderDataEntry : borders.entrySet())
 		{
-			Entry wdata = stringBorderDataEntry;
-			String name = ((String)wdata.getKey()).replace(".", "<");
-			BorderData bord = (BorderData)wdata.getValue();
+			String name = stringBorderDataEntry.getKey().replace(".", "<");
+			BorderData bord = stringBorderDataEntry.getValue();
 
 			cfg.set("worlds." + name + ".x", bord.getX());
 			cfg.set("worlds." + name + ".z", bord.getZ());

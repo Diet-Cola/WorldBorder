@@ -150,13 +150,13 @@ public class DynMapFeatures
 			markSet = markApi.createMarkerSet("worldborder.markerset", "WorldBorder", null, false);
 		else
 			markSet.setMarkerSetLabel("WorldBorder");
-
+		markSet.setLayerPriority(Config.DynmapPriority());
+		markSet.setHideByDefault(Config.DynmapHideByDefault());
 		Map<String, BorderData> borders = Config.getBorders();
 		for(Entry<String, BorderData> stringBorderDataEntry : borders.entrySet())
 		{
-			Entry wdata = stringBorderDataEntry;
-			String worldName = ((String)wdata.getKey());
-			BorderData border = (BorderData)wdata.getValue();
+			String worldName = stringBorderDataEntry.getKey();
+			BorderData border = stringBorderDataEntry.getValue();
 			showBorder(worldName, border);
 		}
 	}
@@ -178,17 +178,20 @@ public class DynMapFeatures
 		if (squareBorders.containsKey(worldName))
 			removeBorder(worldName);
 
+		World world = Bukkit.getWorld(worldName);
+		int y = (world != null) ? world.getMaxHeight() : 255;
+
 		CircleMarker marker = roundBorders.get(worldName);
 		if (marker == null)
 		{
-			marker = markSet.createCircleMarker("worldborder_"+worldName, Config.DynmapMessage(), false, worldName, border.getX(), 64.0, border.getZ(), border.getRadiusX(), border.getRadiusZ(), true);
+			marker = markSet.createCircleMarker("worldborder_"+worldName, Config.DynmapMessage(), false, worldName, border.getX(), y, border.getZ(), border.getRadiusX(), border.getRadiusZ(), true);
 			marker.setLineStyle(lineWeight, lineOpacity, lineColor);
 			marker.setFillStyle(0.0, 0x000000);
 			roundBorders.put(worldName, marker);
 		}
 		else
 		{
-			marker.setCenter(worldName, border.getX(), 64.0, border.getZ());
+			marker.setCenter(worldName, border.getX(), y, border.getZ());
 			marker.setRadius(border.getRadiusX(), border.getRadiusZ());
 		}
 	}
