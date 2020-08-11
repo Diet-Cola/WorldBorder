@@ -53,8 +53,9 @@ public class BorderCheckTask implements Runnable
 			@Override
 			public void run() {
 				handlingPlayers.remove(playerName);
-				if (Config.Debug())
+				if (Config.Debug()) {
 					Config.log("Exemption for " + playerName + " expired");
+				}
 			}
 		}.runTaskLater(WorldBorder.plugin, delay);
 
@@ -136,7 +137,7 @@ public class BorderCheckTask implements Runnable
 		// give some particle and sound effects where the player was beyond the border, if "whoosh effect" is enabled
 		Config.showWhooshEffect(loc);
 
-		if (!returnLocationOnly)
+		if (!returnLocationOnly && newLoc != null)
 			player.teleport(newLoc, TeleportCause.PLUGIN);
 
 		if (!handlingVehicle)
