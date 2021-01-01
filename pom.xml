@@ -1,12 +1,14 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.github.civclassic</groupId>
-    <artifactId>civclassic-parent</artifactId>
-    <version>1.0.0</version>
-  </parent>
+	<parent>
+		<groupId>com.github.civclassic</groupId>
+		<artifactId>civclassic-parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
 
 	<groupId>com.wimbli.WorldBorder</groupId>
 	<artifactId>WorldBorder</artifactId>
@@ -16,8 +18,8 @@
 
 	<repositories>
 		<repository>
-			<id>civ-jenkins</id>
-			<url>https://build.devotedmc.com/plugin/repository/everything/</url>
+			<id>civ-github-repo</id>
+			<url>https://raw.githubusercontent.com/CivClassic/artifacts/master/</url>
 		</repository>
 		<repository>
 			<id>dynmap-repo</id>
@@ -26,14 +28,14 @@
 	</repositories>
 
 	<dependencies>
-		<!--Paper-API-->
+		<!--Paper-API -->
 		<dependency>
 			<groupId>com.destroystokyo.paper</groupId>
 			<artifactId>paper-api</artifactId>
 			<version>1.16.4-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<!--Dynmap API-->
+		<!--Dynmap API -->
 		<dependency>
 			<groupId>us.dynmap</groupId>
 			<artifactId>dynmap-api</artifactId>
@@ -51,6 +53,6 @@
 			<artifactId>paperlib</artifactId>
 			<version>1.0.2</version>
 			<scope>compile</scope>
-		 </dependency>
+		</dependency>
 	</dependencies>
 </project>
