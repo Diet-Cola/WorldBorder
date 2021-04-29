@@ -1,5 +1,6 @@
 package com.wimbli.WorldBorder;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,6 +10,7 @@ public class WorldBorder extends JavaPlugin {
     public static volatile WBCommand wbCommand = null;
     private BlockPlaceListener blockPlaceListener = null;
     private MobSpawnListener mobSpawnListener = null;
+    private ParticleBorderManager particleManager = null;
 
     @Override
     public void onEnable() {
@@ -38,6 +40,7 @@ public class WorldBorder extends JavaPlugin {
         // Well I for one find this info useful, so...
         Location spawn = getServer().getWorlds().get(0).getSpawnLocation();
         Config.log("For reference, the main world's spawn location is at X: " + Config.coord.format(spawn.getX()) + " Y: " + Config.coord.format(spawn.getY()) + " Z: " + Config.coord.format(spawn.getZ()));
+        enableParticleBorder();
     }
 
     @Override
@@ -73,5 +76,12 @@ public class WorldBorder extends JavaPlugin {
             getServer().getPluginManager().registerEvents(this.mobSpawnListener = new MobSpawnListener(), this);
         else if (mobSpawnListener != null)
             mobSpawnListener.unregister();
+    }
+
+    public void enableParticleBorder() {
+        if (particleManager == null) {
+            particleManager = new ParticleBorderManager(new Location(Bukkit.getWorlds().get(0), 0, 0 , -100), new Location(Bukkit.getWorlds().get(0), -100, 256, 0));
+            particleManager.startRunnable();
+        }
     }
 }

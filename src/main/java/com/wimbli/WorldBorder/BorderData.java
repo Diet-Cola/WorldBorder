@@ -1,11 +1,10 @@
 package com.wimbli.WorldBorder;
 
+import java.util.EnumSet;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-
-import java.util.EnumSet;
 
 
 public class BorderData {
@@ -14,6 +13,8 @@ public class BorderData {
     //these material IDs are ones we don't want to drop the player onto, like cactus or lava or fire or activated Ender portal
     public static final EnumSet<Material> painfulBlocks = EnumSet.noneOf(Material.class);
     private static final int limBot = 0;
+    private static final int PARTICLE_SIGHT_RANGE = 16;
+    private static final int PARTICLE_RANGE = 4;
 
     static {
         safeOpenBlocks.add(Material.AIR);
@@ -448,7 +449,6 @@ public class BorderData {
 
         return -1.0;    // no safe Y location?!?!? Must be a rare spot in a Nether world or something
     }
-
 
     @Override
     public boolean equals(Object obj) {
