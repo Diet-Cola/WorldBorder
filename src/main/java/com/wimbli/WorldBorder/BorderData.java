@@ -13,8 +13,6 @@ public class BorderData {
     //these material IDs are ones we don't want to drop the player onto, like cactus or lava or fire or activated Ender portal
     public static final EnumSet<Material> painfulBlocks = EnumSet.noneOf(Material.class);
     private static final int limBot = 0;
-    private static final int PARTICLE_SIGHT_RANGE = 16;
-    private static final int PARTICLE_RANGE = 4;
 
     static {
         safeOpenBlocks.add(Material.AIR);

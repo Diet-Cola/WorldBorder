@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 public class ParticleBorderManager {
 
+    private BorderData border;
     private Location mapCenter;
     private Location first;
     private Location second;
@@ -19,10 +20,13 @@ public class ParticleBorderManager {
     private double particleIncrement;
 
 
-    public ParticleBorderManager(Location first, Location second) {
-        this.mapCenter = new Location(first.getWorld(), 0, 0, 0);
-        this.first = first;
-        this.second = second;
+    public ParticleBorderManager(String worldName, BorderData border) {
+        this.mapCenter = new Location(Bukkit.getWorld(worldName), border.getX(), 0, border.getZ());
+        if (mapCenter == null) {
+            throw new IllegalArgumentException("Failed to create mapCenter!");
+        }
+        this.first = mapCenter.clone().subtract(0, 0, border.getRadiusZ());
+        this.second = mapCenter.clone().subtract(0.1, 0, border.getRadiusZ());
 
         double fRadius = getXZDistance(first);
         double sRadius = getXZDistance(second);
@@ -75,10 +79,10 @@ public class ParticleBorderManager {
     public Location convertArcPositionToLocation(double arcPosition, int y) {
         if (arcPosition > 1.0 || arcPosition < 0.0) return null;
         double theta = fAngle + arcLength * arcPosition;
-        int x = (int) ((wbRange-2.0) * Math.cos(theta));
-        int z = (int) ((wbRange-2.0) * Math.sin(theta));
+        int x = (int) ((wbRange - 2.0) * Math.cos(theta));
+        int z = (int) ((wbRange - 2.0) * Math.sin(theta));
         // TODO strengthen this
-        return new Location(mapCenter.getWorld(), x, y , z);
+        return new Location(mapCenter.getWorld(), x, y, z);
     }
 
     public void showParticles(Player p) {
@@ -98,7 +102,7 @@ public class ParticleBorderManager {
                     if (particeLoc == null) {
                         continue;
                     }
-                    p.spawnParticle(Particle.ENCHANTMENT_TABLE, particeLoc, PARTICLE_SIGHT_RANGE);
+                    p.spawnParticle(Particle.ENCHANTMENT_TABLE, particeLoc, PARTICLE_RANGE);
                 }
                 angle += particleIncrement;
             }

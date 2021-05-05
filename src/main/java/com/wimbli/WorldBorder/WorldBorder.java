@@ -1,6 +1,6 @@
 package com.wimbli.WorldBorder;
 
-import org.bukkit.Bukkit;
+import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -80,8 +80,9 @@ public class WorldBorder extends JavaPlugin {
 
     public void enableParticleBorder() {
         if (particleManager == null) {
-            particleManager = new ParticleBorderManager(new Location(Bukkit.getWorlds().get(0), 0, 0 , -100), new Location(Bukkit.getWorlds().get(0), -100, 256, 0));
-            particleManager.startRunnable();
+            for (Map.Entry<String, BorderData> borders : Config.getBorders().entrySet()) {
+                new ParticleBorderManager(borders.getKey(), borders.getValue().copy()).startRunnable();
+            }
         }
     }
 }
