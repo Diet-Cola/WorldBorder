@@ -79,8 +79,8 @@ public class ParticleBorderManager {
     public Location convertArcPositionToLocation(double arcPosition, int y) {
         if (arcPosition > 1.0 || arcPosition < 0.0) return null;
         double theta = fAngle + arcLength * arcPosition;
-        int x = (int) ((wbRange - 2.0) * Math.cos(theta));
-        int z = (int) ((wbRange - 2.0) * Math.sin(theta));
+        int x = (int) (wbRange * Math.cos(theta));
+        int z = (int) (wbRange * Math.sin(theta));
         // TODO strengthen this
         return new Location(mapCenter.getWorld(), x, y, z);
     }
