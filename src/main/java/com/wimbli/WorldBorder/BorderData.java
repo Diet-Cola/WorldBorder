@@ -486,9 +486,156 @@ public class BorderData
 		return test.x == this.x && test.z == this.z && test.radiusX == this.radiusX && test.radiusZ == this.radiusZ;
 	}
 
-	@Override
-	public int hashCode()
-	{
-		return (((int)(this.x * 10) << 4) + (int)this.z + (this.radiusX << 2) + (this.radiusZ << 3));
-	}
+        double xLoc = loc.getX();
+        double zLoc = loc.getZ();
+        double yLoc = loc.getY();
+
+        // square border
+        if (!round) {
+            if (wrapping) {
+                if (xLoc <= minX)
+                    xLoc = maxX - Config.KnockBack();
+                else if (xLoc >= maxX)
+                    xLoc = minX + Config.KnockBack();
+                if (zLoc <= minZ)
+                    zLoc = maxZ - Config.KnockBack();
+                else if (zLoc >= maxZ)
+                    zLoc = minZ + Config.KnockBack();
+            } else {
+                if (xLoc <= minX)
+                    xLoc = minX + Config.KnockBack();
+                else if (xLoc >= maxX)
+                    xLoc = maxX - Config.KnockBack();
+                if (zLoc <= minZ)
+                    zLoc = minZ + Config.KnockBack();
+                else if (zLoc >= maxZ)
+                    zLoc = maxZ - Config.KnockBack();
+            }
+        }
+
+        // round border
+        else {
+            // algorithm originally from: http://stackoverflow.com/questions/300871/best-way-to-find-a-point-on-a-circle-closest-to-a-given-point
+            // modified by Lang Lukas to support elliptical border shape
+
+            //Transform the ellipse to a circle with radius 1 (we need to transform the point the same way)
+            double dX = xLoc - x;
+            double dZ = zLoc - z;
+            double dU = Math.sqrt(dX * dX + dZ * dZ); //distance of the untransformed point from the center
+            double dT = Math.sqrt(dX * dX / radiusXSquared + dZ * dZ / radiusZSquared); //distance of the transformed point from the center
+            double f = (1 / dT - Config.KnockBack() / dU); //"correction" factor for the distances
+            if (wrapping) {
+                xLoc = x - dX * f;
+                zLoc = z - dZ * f;
+            } else {
+                xLoc = x + dX * f;
+                zLoc = z + dZ * f;
+            }
+        }
+
+        int ixLoc = Location.locToBlock(xLoc);
+        int izLoc = Location.locToBlock(zLoc);
+
+        // Make sure the chunk we're checking in is actually loaded
+        Chunk tChunk = loc.getWorld().getChunkAt(CoordXZ.blockToChunk(ixLoc), CoordXZ.blockToChunk(izLoc));
+        if (!tChunk.isLoaded())
+            tChunk.load();
+
+        yLoc = getSafeY(loc.getWorld(), ixLoc, Location.locToBlock(yLoc), izLoc, flying);
+        if (yLoc == -1)
+            return null;
+
+        return new Location(loc.getWorld(), Math.floor(xLoc) + 0.5, yLoc, Math.floor(zLoc) + 0.5, loc.getYaw(), loc.getPitch());
+    }
+
+    public Location correctedPosition(Location loc, boolean round) {
+        return correctedPosition(loc, round, false);
+    }
+
+    public Location correctedPosition(Location loc) {
+        return correctedPosition(loc, Config.ShapeRound(), false);
+    }
+
+    // check if a particular spot consists of 2 breathable blocks over something relatively solid
+    private boolean isSafeSpot(World world, int X, int Y, int Z, boolean flying) {
+        boolean safe =
+                // target block open and safe or is above maximum Y coordinate
+                (Y == world.getMaxHeight()
+                        || (safeOpenBlocks.contains(world.getBlockAt(X, Y, Z).getType())
+                        // above target block open and safe or is above maximum Y coordinate
+                        && (Y + 1 == world.getMaxHeight()
+                        || safeOpenBlocks.contains(world.getBlockAt(X, Y + 1, Z).getType()))));
+        if (!safe || flying)
+            return safe;
+
+        Material below = world.getBlockAt(X, Y - 1, Z).getType();
+        // below target block not open/breathable (so presumably solid), or is water
+        // below target block not painful
+        // below target block not painful
+        return (!safeOpenBlocks.contains(below) || below == Material.WATER) && !painfulBlocks.contains(below);
+    }
+
+    // find closest safe Y position from the starting position
+    private double getSafeY(World world, int X, int Y, int Z, boolean flying) {
+        // artificial height limit of 127 added for Nether worlds since CraftBukkit still incorrectly returns 255 for their max height, leading to players sent to the "roof" of the Nether
+        final boolean isNether = world.getEnvironment() == World.Environment.NETHER;
+        int limTop = isNether ? 125 : world.getMaxHeight();
+        final int highestBlockBoundary = Math.min(world.getHighestBlockYAt(X, Z) + 1, limTop);
+
+        // if Y is larger than the world can be and user can fly, return Y - Unless we are in the Nether, we might not want players on the roof
+        if (flying && Y > limTop && !isNether)
+            return Y;
+
+        // make sure Y values are within the boundaries of the world.
+        if (Y > limTop) {
+            if (isNether)
+                Y = limTop; // because of the roof, the nether can not rely on highestBlockBoundary, so limTop has to be used
+            else {
+                if (flying)
+                    Y = limTop;
+                else
+                    Y = highestBlockBoundary; // there will never be a save block to stand on for Y values > highestBlockBoundary
+            }
+        }
+        if (Y < limBot)
+            Y = limBot;
+
+        // for non Nether worlds we don't need to check upwards to the world-limit, it is enough to check up to the highestBlockBoundary, unless player is flying
+        if (!isNether && !flying)
+            limTop = highestBlockBoundary + 1;
+        // Expanding Y search method adapted from Acru's code in the Nether plugin
+
+        for (int y1 = Y, y2 = Y; (y1 > limBot) || (y2 < limTop); y1--, y2++) {
+            // Look below.
+            if (y1 > limBot) {
+                if (isSafeSpot(world, X, y1, Z, flying))
+                    return y1;
+            }
+
+            // Look above.
+            if (y2 <= limTop && y2 != y1) {
+                if (isSafeSpot(world, X, y2, Z, flying))
+                    return y2;
+            }
+        }
+
+        return -1.0;    // no safe Y location?!?!? Must be a rare spot in a Nether world or something
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        else if (obj == null || obj.getClass() != this.getClass())
+            return false;
+
+        BorderData test = (BorderData) obj;
+        return test.x == this.x && test.z == this.z && test.radiusX == this.radiusX && test.radiusZ == this.radiusZ;
+    }
+
+    @Override
+    public int hashCode() {
+        return (((int) (this.x * 10) << 4) + (int) this.z + (this.radiusX << 2) + (this.radiusZ << 3));
+    }
 }
