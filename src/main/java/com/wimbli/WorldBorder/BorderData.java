@@ -407,8 +407,13 @@ public class BorderData
 	// check if a particular spot consists of 2 breathable blocks over something relatively solid
 	private boolean isSafeSpot(World world, int X, int Y, int Z, boolean flying)
 	{
-		boolean safe = safeOpenBlocks.contains(world.getBlockAt(X, Y, Z).getType())		// target block open and safe
-					&& safeOpenBlocks.contains(world.getBlockAt(X, Y + 1, Z).getType());	// above target block open and safe
+		boolean safe =
+				// target block open and safe or is above maximum Y coordinate
+				(Y == world.getMaxHeight()
+				|| (safeOpenBlocks.contains(world.getBlockAt(X, Y, Z).getType())
+				// above target block open and safe or is above maximum Y coordinate
+				&& (Y + 1 == world.getMaxHeight()
+				|| safeOpenBlocks.contains(world.getBlockAt(X, Y + 1, Z).getType()))));
 		if (!safe || flying)
 			return safe;
 
@@ -426,7 +431,7 @@ public class BorderData
 	{
 		// artificial height limit of 127 added for Nether worlds since CraftBukkit still incorrectly returns 255 for their max height, leading to players sent to the "roof" of the Nether
 		final boolean isNether = world.getEnvironment() == World.Environment.NETHER;
-		int limTop = isNether ? 125 : world.getMaxHeight() - 2;
+		int limTop = isNether ? 125 : world.getMaxHeight();
 		final int highestBlockBoundary = Math.min(world.getHighestBlockYAt(X, Z) + 1, limTop);
 
 		// if Y is larger than the world can be and user can fly, return Y - Unless we are in the Nether, we might not want players on the roof
@@ -451,7 +456,7 @@ public class BorderData
 
 		// for non Nether worlds we don't need to check upwards to the world-limit, it is enough to check up to the highestBlockBoundary, unless player is flying
 		if (!isNether && !flying)
-			limTop = highestBlockBoundary;
+			limTop = highestBlockBoundary + 1;
 		// Expanding Y search method adapted from Acru's code in the Nether plugin
 
 		for(int y1 = Y, y2 = Y; (y1 > limBot) || (y2 < limTop); y1--, y2++){
@@ -463,7 +468,7 @@ public class BorderData
 			}
 
 			// Look above.
-			if(y2 < limTop && y2 != y1)
+			if(y2 <= limTop && y2 != y1)
 			{
 				if (isSafeSpot(world, X, y2, Z, flying))
 					return y2;
