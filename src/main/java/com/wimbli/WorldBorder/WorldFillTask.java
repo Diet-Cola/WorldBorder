@@ -1,23 +1,19 @@
 package com.wimbli.WorldBorder;
 
 
+import com.wimbli.WorldBorder.Events.WorldBorderFillFinishedEvent;
+import com.wimbli.WorldBorder.Events.WorldBorderFillReportProgressEvent;
+import com.wimbli.WorldBorder.Events.WorldBorderFillStartEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-
-import com.wimbli.WorldBorder.Events.WorldBorderFillFinishedEvent;
-import com.wimbli.WorldBorder.Events.WorldBorderFillReportProgressEvent;
-import com.wimbli.WorldBorder.Events.WorldBorderFillStartEvent;
-
-import io.papermc.lib.PaperLib;
 
 public class WorldFillTask implements Runnable
 {
@@ -628,7 +624,7 @@ public class WorldFillTask implements Runnable
 
 	private CompletableFuture<Void> getPaperLibChunk(World world, int x, int z, boolean gen)
 	{
-		return PaperLib.getChunkAtAsync(world, x, z, gen).thenAccept( (Chunk chunk) ->
+		return world.getChunkAtAsync(x, z, gen).thenAccept( (Chunk chunk) ->
 			{
 				if (chunk != null)
 				{
