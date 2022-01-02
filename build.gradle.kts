@@ -13,7 +13,7 @@ gradle.buildFinished {
 }
 
 allprojects {
-	group = "net.civmc.civmodcore"
+	group = "net.civmc.worldborder"
 	version = "1.11.0-SNAPSHOT"
 	description = "WorldBorder"
 }
