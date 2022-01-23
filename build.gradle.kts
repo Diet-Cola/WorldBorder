@@ -14,7 +14,7 @@ gradle.buildFinished {
 
 allprojects {
 	group = "net.civmc.worldborder"
-	version = "1.11.0-SNAPSHOT"
+	version = "3.0.0-SNAPSHOT"
 	description = "WorldBorder"
 }
 
@@ -31,9 +31,9 @@ subprojects {
 
 	repositories {
 		mavenCentral()
-        maven("https://repo.mikeprimm.com/")
-        maven("https://papermc.io/repo/repository/maven-public/")
-        maven("https://repo.maven.apache.org/maven2/")
+    maven("https://repo.mikeprimm.com/")
+    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.maven.apache.org/maven2/")
 	}
 
 	publishing {
